@@ -11,6 +11,8 @@ const citiesByState = {
 export default function Home() {
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
+  const [openState, setOpenState] = useState(false);
+  const [openCity, setOpenCity] = useState(false);
   const [events, setEvents] = useState([]);
 
   const handleSearch = async () => {
@@ -24,31 +26,85 @@ export default function Home() {
     <div style={{ padding: "20px" }}>
       <h2>Find Events</h2>
 
-      <div style={{ marginBottom: "10px" }}>
-        <div
-          id="state"
-          className="dropdown"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <label>State:</label>
-          <select onChange={(e) => setState(e.target.value)} value={state}>
-            <option value="">Select State</option>
+      {/* STATE DROPDOWN */}
+      <div
+        id="state"
+        style={{
+          border: "1px solid gray",
+          padding: "8px",
+          width: "200px",
+          marginBottom: "10px",
+          cursor: "pointer",
+        }}
+        onClick={() => setOpenState(!openState)}
+      >
+        {state || "Select State"}
+        {openState && (
+          <ul
+            style={{
+              listStyle: "none",
+              margin: 0,
+              padding: "5px",
+              border: "1px solid #aaa",
+            }}
+          >
             {states.map((s) => (
-              <option key={s}>{s}</option>
+              <li
+                key={s}
+                style={{ padding: "5px", cursor: "pointer" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setState(s);
+                  setOpenState(false);
+                  setCity("");
+                }}
+              >
+                {s}
+              </li>
             ))}
-          </select>
-        </div>
+          </ul>
+        )}
       </div>
 
-      <div style={{ marginBottom: "10px" }}>
-        <div id="city" className="dropdown">
-          <label>City:</label>
-          <select onChange={(e) => setCity(e.target.value)} value={city}>
-            <option value="">Select City</option>
-            {state &&
-              citiesByState[state].map((c) => <option key={c}>{c}</option>)}
-          </select>
-        </div>
+      {/* CITY DROPDOWN */}
+      <div
+        id="city"
+        style={{
+          border: "1px solid gray",
+          padding: "8px",
+          width: "200px",
+          marginBottom: "10px",
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          if (state) setOpenCity(!openCity);
+        }}
+      >
+        {city || "Select City"}
+        {openCity && state && (
+          <ul
+            style={{
+              listStyle: "none",
+              margin: 0,
+              padding: "5px",
+              border: "1px solid #aaa",
+            }}
+          >
+            {citiesByState[state].map((c) => (
+              <li
+                key={c}
+                style={{ padding: "5px", cursor: "pointer" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCity(c);
+                  setOpenCity(false);
+                }}
+              >
+                {c}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <button id="searchBtn" disabled={!state || !city} onClick={handleSearch}>
